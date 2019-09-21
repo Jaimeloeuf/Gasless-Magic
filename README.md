@@ -30,6 +30,9 @@ Smart Contract Wallet is a Blockchain wallet/account that runs as a piece of cod
 
 
 ---
+## Credits
+This project is rather heavily influenced by the [Gnosis Safe project](https://github.com/gnosis/safe-contracts).  
+
 ## Security and Liability
 All contracts are WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
 Use this at your own risk and discretion, please do your own research before implementing.  
