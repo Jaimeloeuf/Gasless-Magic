@@ -36,6 +36,7 @@ contract Proxy {
     
     // Function to set address of the new Smart Contract implementation
     function new_implementation(address payable new_address) public onlyOwner {
+        require(new_address != address(0), "New Address cannot be a 0 (invalid) address");
         require(current_implementation != new_address, "New Address cannot be the same as the Old address");
         current_implementation = new_address;
     }
