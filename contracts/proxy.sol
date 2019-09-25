@@ -40,4 +40,8 @@ contract Proxy {
         require(current_implementation != new_address, "New Address cannot be the same as the Old address");
         current_implementation = new_address;
     }
+    
+    function changeOwner(address payable new_owner) public onlyOwner returns {
+        owner = new_owner;
+    }
 }
