@@ -41,7 +41,7 @@ contract Proxy {
         current_implementation = new_address;
     }
     
-    function changeOwner(address payable new_owner) public onlyOwner returns {
+    function changeOwner(address payable new_owner) public onlyOwner {
         owner = new_owner;
     }
 }
