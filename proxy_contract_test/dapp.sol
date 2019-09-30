@@ -23,13 +23,28 @@ contract dapp {
     event debug(string, uint256);
     event debug(string, address);
 
+    function debug_values(uint256 _n) internal {
+        // Emit the values passed into the function
+        emit debug("Function input: ", _n);
+
+        // Emit the global values via events for debugging
+        emit debug("Value of N is now: ", n);
+        emit debug("Sender is now: ", sender);
+    }
+
     // Setter function to change the stored variables
     function setN(uint256 _n) public {
         n = _n;
         sender = msg.sender;
 
-        // Emit the events for debugging
-        emit debug("Value of N is now: ", n);
-        emit debug("Sender is now: ", sender);
+        debug_values(_n);
+    }
+
+    // Setter function to change the stored variables
+    function setN_restricted(uint256 _n) public restricted {
+        n = _n;
+        sender = msg.sender;
+
+        debug_values(_n);
     }
 }
