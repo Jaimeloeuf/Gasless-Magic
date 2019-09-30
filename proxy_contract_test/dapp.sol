@@ -4,6 +4,17 @@ pragma solidity ^0.5.11;
     Only stores 2 variable and exposes a setter function for these values.
 */
 contract dapp {
+    address public owner;
+
+    constructor() public {
+        owner = msg.sender;
+    }
+
+    modifier restricted() {
+        require(msg.sender == owner, "Non-Owner accessed restricted function");
+        _;
+    }
+
     /* The values to be stored and publicly accessible to be read */
     uint256 public n;
     address public sender;
