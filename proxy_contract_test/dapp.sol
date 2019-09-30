@@ -1,4 +1,4 @@
-pragma solidity ^ 0.5.11;
+pragma solidity ^0.5.11;
 
 /*  Example dapp contract to demo use of proxy contract.
     Only stores 2 variable and exposes a setter function for these values.
