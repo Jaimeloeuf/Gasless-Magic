@@ -3,8 +3,7 @@ pragma solidity ^0.5.11;
 /* Proxy contract that makes a call to the dapp contract to modify the dapp's state */
 contract proxy {
     bool public res;
-    bytes private val;
-
+    bytes public val;
     bytes public encoded_value;
 
     function callSetN(address _e, uint256 _n) public {
