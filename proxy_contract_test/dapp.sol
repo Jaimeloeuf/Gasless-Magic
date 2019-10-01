@@ -33,18 +33,20 @@ contract dapp {
     }
 
     // Setter function to change the stored variables
-    function setN(uint256 _n) public {
+    function setN(uint256 _n) public returns (uint256) {
         n = _n;
         sender = msg.sender;
 
         debug_values(_n);
+        return n;
     }
 
     // Setter function to change the stored variables
-    function setN_restricted(uint256 _n) public restricted {
+    function setN_restricted(uint256 _n) public restricted returns (uint256) {
         n = _n;
         sender = msg.sender;
 
         debug_values(_n);
+        return n;
     }
 }
