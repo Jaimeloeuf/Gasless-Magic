@@ -41,6 +41,15 @@ contract dapp {
         return n;
     }
 
+    // Same function as setN, but gets the sender address as return value
+    function setN_getSender(uint256 _n) public returns (address) {
+        n = _n;
+        sender = msg.sender;
+
+        debug_values(_n);
+        return sender;
+    }
+
     // Setter function to change the stored variables
     function setN_restricted(uint256 _n) public restricted returns (uint256) {
         n = _n;
