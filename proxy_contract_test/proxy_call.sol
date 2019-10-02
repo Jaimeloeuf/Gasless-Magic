@@ -25,14 +25,6 @@ contract proxy {
         return bytesToAddress(val);
     }
 
-    function callSetN(address addr, uint256 _n) public {
-        // encoded_value = abi.encode(bytes4(keccak256("setN(uint256)")), _n);
-        encoded_value = abi.encodePacked(bytes4(keccak256("setN(uint256)")), _n);
-
-        // "dapp" contract's storage is set, whereas "proxy" contract's storage is not modified
-        (res, val) = addr.call(encoded_value);
-    }
-
     function proxied_call(address addr, string memory fn_signature, uint256 _n) public {
         // 1) Convert fn_signature from string type to bytes type
         // 2) Get the keccak256 hash of the signature
@@ -42,5 +34,11 @@ contract proxy {
 
         // Make a proxied call to the method of given address and catch the result of the call with the returned value
         (res, val) = addr.call(encoded_value);
+    }
+
+    // Wrapper function over proxied_call, with hardcoded function signature
+    function callSetN(address addr, uint256 _n) public {
+        // encoded_value = abi.encode(bytes4(keccak256("setN(uint256)")), _n);
+        proxied_call(addr, "setN(uint256)", _n);
     }
 }
