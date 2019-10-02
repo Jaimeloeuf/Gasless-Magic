@@ -32,4 +32,15 @@ contract proxy {
         // "dapp" contract's storage is set, whereas "proxy" contract's storage is not modified
         (res, val) = _e.call(encoded_value);
     }
+
+    function proxied_call(address _e, string memory fn_signature, uint256 _n) public {
+        // 1) Convert fn_signature from string type to bytes type
+        // 2) Get the keccak256 hash of the signature
+        // 3) Get the first 4 bytes of the signature hash as function selector
+        // 4) encode it together with the arguement for the function
+        encoded_value = abi.encodePacked(bytes4(keccak256(bytes(fn_signature))), _n);
+
+        // Make a proxied call to the method of given address and catch the result of the call with the returned value
+        (res, val) = _e.call(encoded_value);
+    }
 }
