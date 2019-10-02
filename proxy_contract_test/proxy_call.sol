@@ -33,6 +33,7 @@ contract proxy {
         encoded_value = abi.encodePacked(bytes4(keccak256(bytes(fn_signature))), _n);
 
         // Make a proxied call to the method of given address and catch the result of the call with the returned value
+        // Using "call" code, Callee's contract state is modified, whereas caller's contract state is unchanged
         (res, val) = addr.call(encoded_value);
     }
 
