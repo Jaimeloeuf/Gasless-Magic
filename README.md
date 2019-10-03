@@ -4,6 +4,14 @@ Smart Contract Wallet is a Blockchain wallet/account that runs as a piece of cod
 ## Main features
 - Gas Abstraction
 
+---
+## Project Structure
+- proxy_contract_test/
+    - Directory that holds its own smart contracts for testing proxy contracts out, with basic functionality to make sure the proxy contract works first.
+- contracts/
+    - Directory for all the smart contracts of this Smart Contract Wallet
+    - Basically what will be deployed.
+
 
 ---
 ## Q&A
