@@ -25,7 +25,7 @@ contract proxy {
         return bytesToAddress(val);
     }
 
-    function proxied_call(address addr, string memory fn_signature, uint256 _n) public {
+    function proxied_call(address addr, string memory fn_signature, uint256 _n) public returns (bytes memory value) {
         // 1) Convert fn_signature from string type to bytes type
         // 2) Get the keccak256 hash of the signature
         // 3) Get the first 4 bytes of the signature hash as function selector
@@ -35,11 +35,18 @@ contract proxy {
         // Make a proxied call to the method of given address and catch the result of the call with the returned value
         // Using "call" code, Callee's contract state is modified, whereas caller's contract state is unchanged
         (res, val) = addr.call(encoded_value);
+        return val;
     }
 
     // Wrapper function over proxied_call, with hardcoded function signature
     function callSetN(address addr, uint256 _n) public {
         // encoded_value = abi.encode(bytes4(keccak256("setN(uint256)")), _n);
         proxied_call(addr, "setN(uint256)", _n);
+    }
+
+    // Wrapper function over proxied_call, with hardcoded function signature
+    function callSetN_getSender(address addr, uint256 _n) public {
+        // encoded_value = abi.encode(bytes4(keccak256("setN(uint256)")), _n);
+        proxied_call(addr, "setN_getSender(uint256)", _n);
     }
 }
