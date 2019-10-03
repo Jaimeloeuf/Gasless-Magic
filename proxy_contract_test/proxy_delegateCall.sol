@@ -2,11 +2,13 @@ pragma solidity ^0.5.11;
 
 /* Proxy contract that makes a call to the dapp contract to modify the it's own state */
 contract proxy {
+    // Public variables that are set by the call function.
     bool public res;
     bytes public val;
     bytes public encoded_value;
 
-    uint public n;
+    // Variables modifiable by the code from delegateCall executing in the current memory context
+    uint256 public n;
     address public sender;
 
     function callSetN(address _e, uint256 _n) public {
