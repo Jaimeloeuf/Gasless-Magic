@@ -6,7 +6,12 @@ contract proxy {
     bool public res;
     bytes public val;
     bytes public encoded_value;
+    bytes public encoding;
     
+    /* Events used for debugging */
+    event debug(string, bytes);
+    event debug(string, uint256);
+
     // Function that converts a uint256 bytes to address type using assembly
     function bytesToAddress(bytes memory bys) private pure returns (address addr) {
         assembly {
