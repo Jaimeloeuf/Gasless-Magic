@@ -21,7 +21,8 @@
   },
   "homepage": "https://github.com/Jaimeloeuf/Gasless-Magic#readme",
   "dependencies": {
-    "solc": "^0.5.11"
+    "solc": "^0.5.11",
+    "web3": "^1.2.1"
   },
   "devDependencies": {
     "truffle": "^5.0.37"
