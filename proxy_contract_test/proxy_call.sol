@@ -54,4 +54,14 @@ contract proxy {
         // encoded_value = abi.encode(bytes4(keccak256("setN(uint256)")), _n);
         proxied_call(addr, "setN_getSender(uint256)", _n);
     }
+
+    // Fallback function that should forward all calls to proxied contract
+    function() external payable {
+        emit debug("Length of msg.data in fallback fn:", msg.data.length);
+        emit debug("The msg.data passed to the fallback function is:", msg.data);
+
+        assembly {
+
+        }
+    }
 }
