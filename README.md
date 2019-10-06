@@ -1,10 +1,11 @@
 # Smart Contract Wallet
 Smart Contract Wallet is a Blockchain wallet/account that runs as a piece of code on the Blockchain (more specifically, the Ethereum Blockchain) to control your funds. This contrast with the traditionally available EOA (Externally Owned Accounts) which is just a Private/Public Key pair.
 
+
 ## Main features
 - Gas Abstraction
 
----
+
 ## Project Structure
 - proxy_contract_test/
     - Directory that holds its own smart contracts for testing proxy contracts out, with basic functionality to make sure the proxy contract works first.
@@ -13,7 +14,6 @@ Smart Contract Wallet is a Blockchain wallet/account that runs as a piece of cod
     - Basically what will be deployed.
 
 
----
 ## Q&A
 - Who will pay for the smart contract wallet deployment?
     - Torus (The service behind the wallet) will pay for the creation of the user's smart contract wallet, so it will seem as if there is no fee.
@@ -37,13 +37,14 @@ Smart Contract Wallet is a Blockchain wallet/account that runs as a piece of cod
     - Ideally the dApp should pay for the gas
 
 
----
 ## Credits
 This project is rather heavily influenced by the [Gnosis Safe project](https://github.com/gnosis/safe-contracts).  
+
 
 ## Security and Liability
 All contracts are WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
 Use this at your own risk and discretion, please do your own research before implementing.  
+
 
 ## License and Contributing
 All items in this Repo are released under the MIT License. Please reach out [here](mailto:junjie@tor.us) if you would like to contribute.  
