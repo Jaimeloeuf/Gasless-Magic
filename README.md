@@ -3,7 +3,17 @@ Smart Contract Wallet is a Blockchain wallet/account that runs as a piece of cod
 
 
 ## Main features
+- Gasless wallet deployment
+    - As a smart contract wallet is a smart contract, deployment of a smart contract wallet requires gas from the deploying party, thus to remove this UX barrier especially for users who just encountered blockchain for the first time, a Gasless deployment system will be used.
+    - Basically the deployment party of the wallet will be Torus which to the user will be invisible and free.
+    - Done using meta transaction and CREATE2
 - Gas Abstraction
+    - Where the Smart Contract wallet provider pays for the user's gas to increase user adoption
+    - Done with Meta transactions
+    - Invisible to the user, and does not require any work on the user's end
+- Integration with Torus wallet (Web2.0 convenience for Web3.0)
+    - Integrates with the well established Torus EOA "wallet" that gives you the ease of use of Web2.0 systems like Google Logins for Web3.0 softwares.
+    - Readmore at the [website](tor.us)
 
 
 ## Project Structure
@@ -38,7 +48,11 @@ Smart Contract Wallet is a Blockchain wallet/account that runs as a piece of cod
 
 
 ## Credits
-This project is rather heavily influenced by the [Gnosis Safe project](https://github.com/gnosis/safe-contracts).  
+This project is heavily influenced by the from many sources, some of which are:
+- The [Gnosis Safe project](https://github.com/gnosis/safe-contracts)
+- [Argent wallet](https://www.argent.xyz)
+- [Austin Griffith's work on Meta transactions](https://metatx.io)
+- [Tabookey's GSN implementation](https://github.com/tabookey/tabookey-gasless)
 
 
 ## Security and Liability
