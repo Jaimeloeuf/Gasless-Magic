@@ -5,6 +5,9 @@ This is a dApp project used for demoing the use of proxy contracts.
 - dapp.sol
     - Example dapp smart contract, that will be used to demo interactions with a dapp from proxy contracts
     - Super simple dapp, that is just a basic state machine
+- Proxy.sol
+    - Proxy contract from the Gnosis Safe project. Copied over to learn how they do proxy calls.
+    - Documented all the Assembly code in the fallback function too.
 - proxy_call.sol
     - A proxy contract, that makes proxied calls using the "call()" member of the given dapp smart contract address
     - Where the underlying opcode used is "delegateCall"
