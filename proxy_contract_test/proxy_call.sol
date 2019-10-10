@@ -70,6 +70,7 @@ contract proxy {
             Meaning that all the call data are part of the function arguement list.
         */
 
+        // solium-disable-next-line security/no-inline-assembly
         assembly {
 
         }
