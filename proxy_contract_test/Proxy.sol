@@ -42,6 +42,7 @@ contract Proxy {
             */
 
             // Load all data from storage data starting at address 0
+            // The data from storage at position 0, is the variable "address public masterCopy"
             // Use a bitmask to grab the first 20bytes or unint160 of the storage data to get the address value
             let masterCopy := and(sload(0), 0xffffffffffffffffffffffffffffffffffffffff)
 
