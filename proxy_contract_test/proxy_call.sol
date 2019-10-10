@@ -64,6 +64,12 @@ contract proxy {
         emit debug("Length of msg.data in fallback fn:", msg.data.length);
         emit debug("The msg.data passed to the fallback function is:", msg.data);
 
+        /*  What we are trying to implement is different from most smart contract proxies out there
+            Because unlike the other proxy contracts where values like delegate/proxied address to call are all fixed/pre-set,
+            We want a generalisable contract where everything to do with the transaction is relayed in, instead of it being fixed
+            Meaning that all the call data are part of the function arguement list.
+        */
+
         assembly {
 
         }
