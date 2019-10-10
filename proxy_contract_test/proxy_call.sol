@@ -31,6 +31,10 @@ contract proxy {
     }
 
     function proxied_call(address addr, string memory fn_signature, uint256 _n) public returns (bytes memory value) {
+        return proxied_call(addr, fn_signature, new bytes(_n));
+    }
+    
+    function proxied_call(address addr, string memory fn_signature, bytes memory _n) public returns (bytes memory value) {
         // 1) Convert fn_signature from string type to bytes type
         // 2) Get the keccak256 hash of the signature
         // 3) Get the first 4 bytes of the signature hash as function selector
