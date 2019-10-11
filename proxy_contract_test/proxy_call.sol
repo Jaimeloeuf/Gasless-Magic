@@ -73,14 +73,17 @@ contract proxy {
         // solium-disable-next-line security/no-inline-assembly
         assembly {
             /*
+            /*
+                Steps:
+                    1) Get all the data needed for the call
+                    2) Make the call and get the execution status + return values
+                    3) Check if the call succeeded
+                        a) Revert all state changes if the call faile
+                        b) Return the call's return value to the contract caller as return value
                 Getting data needed for the call
                     1) Get the address to be called, this is part of the call data
                     2) Get the function signature and input value(s) for the function to be called from the call data, as 1 full hex
-                
-                Steps:
-                    1)
             */
-
 
         }
     }
