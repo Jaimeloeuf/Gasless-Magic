@@ -1,3 +1,4 @@
+/* Deprecated solidity proxy call method. Refer to the asm implementation */
 pragma solidity ^0.5.11;
 
 /* Proxy contract that makes a call to the dapp contract to modify the dapp's state */
@@ -34,6 +35,7 @@ contract proxy {
         return proxied_call(addr, fn_signature, new bytes(_n));
     }
     
+    // @Note Problem with this is what if the user wants to pass things like structs and arrays in?
     function proxied_call(address addr, string memory fn_signature, bytes memory _n) public returns (bytes memory value) {
         // 1) Convert fn_signature from string type to bytes type
         // 2) Get the keccak256 hash of the signature
@@ -57,34 +59,5 @@ contract proxy {
     function callSetN_getSender(address addr, uint256 _n) public {
         // encoded_value = abi.encode(bytes4(keccak256("setN(uint256)")), _n);
         proxied_call(addr, "setN_getSender(uint256)", _n);
-    }
-
-    // Fallback function that should forward all calls to proxied contract
-    function() external payable {
-        emit debug("Length of msg.data in fallback fn:", msg.data.length);
-        emit debug("The msg.data passed to the fallback function is:", msg.data);
-
-        /*  What we are trying to implement is different from most smart contract proxies out there
-            Because unlike the other proxy contracts where values like delegate/proxied address to call are all fixed/pre-set,
-            We want a generalisable contract where everything to do with the transaction is relayed in, instead of it being fixed
-            Meaning that all the call data are part of the function arguement list.
-        */
-
-        // solium-disable-next-line security/no-inline-assembly
-        assembly {
-            /*
-            /*
-                Steps:
-                    1) Get all the data needed for the call
-                    2) Make the call and get the execution status + return values
-                    3) Check if the call succeeded
-                        a) Revert all state changes if the call faile
-                        b) Return the call's return value to the contract caller as return value
-                Getting data needed for the call
-                    1) Get the address to be called, this is part of the call data
-                    2) Get the function signature and input value(s) for the function to be called from the call data, as 1 full hex
-            */
-
-        }
     }
 }
