@@ -8,7 +8,22 @@ pragma solidity ^0.5.11;
 contract proxy {
     /* Events used for debugging */
     event debug(string, bytes);
-    event debug(string, uint256);
+
+    // owner is the first and only declared variable
+    // Remember to offset when using storage and coming out with the storage layout
+    address public owner;
+
+    /// @dev Constructor used for setting contract owner address
+    constructor() public {
+        owner = msg.sender;
+    }
+
+    // Modifier that only allows owner of the contract to pass
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Non-Owner tried to access 'onlyOwner' restricted function");
+        _;
+    }
+
 
     // Fallback function that should forward all calls to proxied contract
     function() external payable {
