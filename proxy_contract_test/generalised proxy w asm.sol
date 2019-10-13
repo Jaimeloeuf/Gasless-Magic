@@ -24,6 +24,11 @@ contract proxy {
         _;
     }
 
+    /// @dev Function for changing the owner of the contract
+    /// @param new_owner Is a payable address which will now own/inherit the contract
+    function changeOwner(address payable new_owner) public onlyOwner {
+        delegate = newDelegateAddress;
+    }
 
     // Fallback function that should forward all calls to proxied contract
     function() external payable {
