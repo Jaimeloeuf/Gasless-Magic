@@ -20,7 +20,7 @@ contract proxy {
 
     // Modifier that only allows owner of the contract to pass
     modifier onlyOwner() {
-        require(msg.sender == owner, "Non-Owner tried to access 'onlyOwner' restricted function");
+        require(msg.sender == owner, "Only owner can call this restricted function");
         _;
     }
 
@@ -30,8 +30,9 @@ contract proxy {
         owner = new_owner;
     }
 
+    // @Todo might remove the modifier and implement check inside function
     // Fallback function that should forward all calls to proxied contract
-    function() external payable {
+    function() external payable onlyOwner {
         emit debug("Length of msg.data in fallback fn:", msg.data.length);
         emit debug("The msg.data passed to the fallback function is:", msg.data);
 
