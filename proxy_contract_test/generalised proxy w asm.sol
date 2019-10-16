@@ -8,6 +8,7 @@ pragma solidity ^0.5.11;
 contract proxy {
     /* Events used for debugging */
     event debug(string, bytes);
+    event debug(string, uint256);
 
     // owner is the first and only declared variable
     // Remember to offset when using storage and coming out with the storage layout
