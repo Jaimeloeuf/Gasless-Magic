@@ -56,6 +56,43 @@ contract proxy {
                     1) Get the address to be called, this is part of the call data
                     2) Get the function signature and input value(s) for the function to be called from the call data, as 1 full hex
             */
+
+            /* Step (1) Extract data needed, from the call data */
+            // Copy the calling data into memory
+            // calldatasize is the size of call data in bytes
+            // Copy calldatasize() amount of bytes from position 0 of calldata to position 0 of memory
+            calldatacopy(0, 0, calldatasize)
+
+            // Load all data from storage data starting at address 0
+            // The data from storage at position 0, is the variable "address public addr"
+            // Use a bitmask to grab the first 20bytes or unint160 of the storage data to get the address value
+            let addr := and(mload(0), 0xffffffffffffffffffffffffffffffffffffffff)
+
+
+            /* Step (2) Making the call and getting the return result */
+            // calldatasize is the size of call data in bytes
+            // Make a delegate call to the addr address with
+            //      input memory from 0 to 0 + calldatasize()
+            //      providing "gas" amount of gas
+            //      the "gas" variable stores the gas amount still available to execution
+            //      output area from 0 to 0 + 0
+            // Effectively using the code from addr but stay in context of current contract
+            let success := delegatecall(gas, addr, 0, calldatasize(), 0, 0)
+            // let success := call(gas, addr, 0, calldatasize(), 0, 0)
+
+            // returndatasize() returns the size of the last return data
+            // copy returndatasize() bytes from position 0 of returndata to position 0 of mememory
+            returndatacopy(0, 0, returndatasize)
+
+
+            /* Step (3) Making the call */
+            // if success == 0, meaning the operation is not successful
+            // revert state changes and end execution
+            // Return data memory from position 0 to 0 + returndatasize()
+            if eq(success, 0) { revert(0, returndatasize) }
+
+            // End execution and return data memory from position 0 to 0 + returndatasize()
+            return(0, returndatasize())
         }
     }
 }
