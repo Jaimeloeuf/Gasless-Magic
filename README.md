@@ -61,6 +61,6 @@ Use this at your own risk and discretion, please do your own research before imp
 
 
 ## License and Contributing
-All items in this Repo are released under the MIT License. Please reach out [here](mailto:junjie@tor.us) or [here](mailto:jaimeloeuf@gmail.com) if you would like to contribute.  
+All items in this Repo are released under the MIT License. Please reach out [here](mailto:junjie@tor.us) or [here](mailto:jaimeloeuf@gmail.com) if you would like to contribute, and please follow our CODE OF CONDUCT.  
 Contributors
 - JJ ([Jaimeloeuf](https://github.com/Jaimeloeuf))
