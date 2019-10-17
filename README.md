@@ -13,7 +13,7 @@ Smart Contract Wallet is a Blockchain wallet/account that runs as a piece of cod
     - Invisible to the user, and does not require any work on the user's end
 - Integration with Torus wallet (Web2.0 convenience for Web3.0)
     - Integrates with the well established Torus EOA "wallet" that gives you the ease of use of Web2.0 systems like Google Logins for Web3.0 softwares.
-    - Readmore at the [website](tor.us)
+    - Readmore at the [website](https://tor.us)
 
 
 ## Project Structure
@@ -61,6 +61,6 @@ Use this at your own risk and discretion, please do your own research before imp
 
 
 ## License and Contributing
-All items in this Repo are released under the MIT License. Please reach out [here](mailto:junjie@tor.us) if you would like to contribute.  
+All items in this Repo are released under the MIT License. Please reach out [here](mailto:junjie@tor.us) or [here](mailto:jaimeloeuf@gmail.com) if you would like to contribute.  
 Contributors
 - JJ ([Jaimeloeuf](https://github.com/Jaimeloeuf))
