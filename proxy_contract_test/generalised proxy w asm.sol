@@ -22,8 +22,8 @@ contract proxy {
 
 
     // @Debug Variables used for debugging to view in the Remix UI
-    // bytes32 public addr; // sstore(1, )
-    address public addr; // sstore(1, )
+    bytes32 public addr; // sstore(1, )
+    // address public addr; // sstore(1, )
     bytes32 public txData; // sstore(2, )
     bool public res; // sstore(3, )
 
@@ -88,9 +88,14 @@ contract proxy {
 
             // Load all data from storage data starting at address 0
             // The data from storage at position 0, is the variable "address public addr"
-            // Use a bitmask to grab the first 20bytes or unint160 of the storage data to get the address value
+            // Bitmask to grab the first 20bytes/40Hex/unint160 of data from the first 32bytes/64Hex of calldata memory slot to get the input address
             let addr := and(mload(0), 0xffffffffffffffffffffffffffffffffffffffff000000000000000000000000)
-
+            
+            // If the storage data type is "address" type,
+            // store it only after shifting it all the way to right to prevent your data from being cut, as sol try to fit it into the type smaller size
+            // sstore(1, shr(96, addr))
+            // Store directly if the variable is of bytes32 type
+            sstore(1, addr)
 
             /* Step (2) Making the call and getting the return result */
             // calldatasize is the size of call data in bytes
