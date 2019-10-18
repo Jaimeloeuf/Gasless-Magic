@@ -50,6 +50,7 @@ contract proxy {
     // @Todo might remove the modifier and implement check inside function
     // Fallback function that should forward all calls to proxied contract
     function() external payable onlyOwner {
+        /* @Debug  */
         emit debug("Length of msg.data in fallback fn:", msg.data.length);
         emit debug("The msg.data passed to the fallback function is:", msg.data);
 
@@ -99,11 +100,20 @@ contract proxy {
             // The below check wont actually work, because if user send any data, the thing wont be null, it will just treat the data as the address.
             // require(addr !== address(0), "Cannot create contract liddat")
             
+            // @Debug 
             // If the storage data type is "address" type,
             // store it only after shifting it all the way to right to prevent your data from being cut, as sol try to fit it into the type smaller size
             // sstore(1, shr(96, addr))
             // Store directly if the variable is of bytes32 type
             sstore(1, addr)
+
+            // The rest of the data in memory, that is not the address, is the transaction data for the proxied contract
+            // let txData := mload(20)
+            // Below also works, by directly taking the txData from calldata
+            let txData := calldataload(20)
+            
+            // @Debug Store the transaction data for the proxied contract to see if the parsing was correct
+            sstore(2, txData)
 
             /* Step (2) Making the call and getting the return result */
             // calldatasize is the size of call data in bytes
