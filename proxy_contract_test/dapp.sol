@@ -58,4 +58,9 @@ contract dapp {
         debug_values(_n);
         return n;
     }
+    
+    // Simple fallback function that will just fire off an event when called.
+    function() external payable {
+        emit debug("Fallback function of dApp contract has been called by: ", msg.sender);
+    }
 }
