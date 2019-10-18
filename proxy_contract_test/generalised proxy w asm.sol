@@ -1,6 +1,11 @@
 /*  @Doc
     This is the assembly implementation of the generalised proxy contract
     Essentially a identity contract. Implementing something similiar to the ERC725 spec
+
+    Legend:
+    - @Todo -> Items to work on / Fix
+    - @Notes -> Notes to devs, usually to explain some concept or code purpose
+    - @Debug -> Symbol to indicate code below or on the left is used for Debug
 */
 
 pragma solidity ^0.5.11;
