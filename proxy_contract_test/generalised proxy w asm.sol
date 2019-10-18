@@ -20,6 +20,14 @@ contract proxy {
     // Remember to offset when using storage and coming out with the storage layout
     address public owner;
 
+
+    // @Debug Variables used for debugging to view in the Remix UI
+    // bytes32 public addr; // sstore(1, )
+    address public addr; // sstore(1, )
+    bytes32 public txData; // sstore(2, )
+    bool public res; // sstore(3, )
+
+
     /// @dev Constructor used for setting contract owner address
     constructor() public {
         owner = msg.sender;
@@ -64,6 +72,12 @@ contract proxy {
                 Getting data needed for the call
                     1) Get the address to be called, this is part of the call data
                     2) Get the function signature and input value(s) for the function to be called from the call data, as 1 full hex
+
+                Expected Calldata:
+                    - "Address" of contract to call
+                    - "Data" the transaction data to pass to the other contract
+                        - The standard transaction data we are calling it directly.
+                        - The function selector and the function input
             */
 
             /* Step (1) Extract data needed, from the call data */
