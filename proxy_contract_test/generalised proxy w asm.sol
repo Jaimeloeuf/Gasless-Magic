@@ -91,6 +91,14 @@ contract proxy {
             // Bitmask to grab the first 20bytes/40Hex/unint160 of data from the first 32bytes/64Hex of calldata memory slot to get the input address
             let addr := and(mload(0), 0xffffffffffffffffffffffffffffffffffffffff000000000000000000000000)
             
+            // @Notes On what if the user sends address(0) as the address
+            // When the "to" field of a transaction is empty, it means that a new contract should be created with the transaction data
+            // The user should not send a null address, because we assume that the address is not null during our parsing
+            // Maybe frontend should send a variable at the start, so the first Hex acts as a bool, indicating if address is null, before parsing calldata accordingly.
+            // The bool will be used to indicate if the operation is for creating contracts or just making a normal contract call
+            // The below check wont actually work, because if user send any data, the thing wont be null, it will just treat the data as the address.
+            // require(addr !== address(0), "Cannot create contract liddat")
+            
             // If the storage data type is "address" type,
             // store it only after shifting it all the way to right to prevent your data from being cut, as sol try to fit it into the type smaller size
             // sstore(1, shr(96, addr))
