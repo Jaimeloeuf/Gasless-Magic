@@ -49,6 +49,28 @@ contract proxy {
         return val;
     }
 
+    // @Note Pseudo code below, showing a possible flow
+    function proxied_call(address addr, string memory fn_signature, bytes memory _n, bytes memory sig) public returns (bytes memory value) {
+        // 1) Convert fn_signature from string type to bytes type
+        // 2) Get the keccak256 hash of the signature
+        // 3) Get the first 4 bytes of the signature hash as function selector
+        // 4) encode it together with the arguement for the function
+
+        sigdata = concat(bytes(address), bytes(fn_signature), _n);
+        ecrecover(sigdata, sig)
+        
+        encoding = abi.encodePacked(_n);
+        
+        emit debug("encoded value is: ", encoding);
+        
+        encoded_value = abi.encodePacked(bytes4(keccak256(bytes(fn_signature))), encoding);
+
+        // Make a proxied call to the method of given address and catch the result of the call with the returned value
+        // Using "call" code, Callee's contract state is modified, whereas caller's contract state is unchanged
+        (res, val) = addr.call(encoded_value);
+        return val;
+    }
+
     // Wrapper function over proxied_call, with hardcoded function signature
     function callSetN(address addr, uint256 _n) public {
         // encoded_value = abi.encode(bytes4(keccak256("setN(uint256)")), _n);
