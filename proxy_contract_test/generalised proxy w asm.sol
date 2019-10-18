@@ -1,5 +1,6 @@
 /*  @Doc
     This is the assembly implementation of the generalised proxy contract
+    Essentially a identity contract. Implementing something similiar to the ERC725 spec
 */
 
 pragma solidity ^0.5.11;
@@ -19,6 +20,7 @@ contract proxy {
         owner = msg.sender;
     }
 
+    // This modifier can be edited to create multi owner, either use multisig, or either one in a map.
     // Modifier that only allows owner of the contract to pass
     modifier onlyOwner() {
         require(msg.sender == owner, "Only owner can call this restricted function");
@@ -31,6 +33,7 @@ contract proxy {
         owner = new_owner;
     }
 
+    /// @dev Fallback function forwards all transactions and returns all received return data.
     // @Todo might remove the modifier and implement check inside function
     // Fallback function that should forward all calls to proxied contract
     function() external payable onlyOwner {
@@ -61,25 +64,25 @@ contract proxy {
             /* Step (1) Extract data needed, from the call data */
             // Copy the calling data into memory
             // calldatasize is the size of call data in bytes
-            // Copy calldatasize() amount of bytes from position 0 of calldata to position 0 of memory
+            // Copy calldatasize amount of bytes from position 0 of calldata to position 0 of memory
             calldatacopy(0, 0, calldatasize)
 
             // Load all data from storage data starting at address 0
             // The data from storage at position 0, is the variable "address public addr"
             // Use a bitmask to grab the first 20bytes or unint160 of the storage data to get the address value
-            let addr := and(mload(0), 0xffffffffffffffffffffffffffffffffffffffff)
+            let addr := and(mload(0), 0xffffffffffffffffffffffffffffffffffffffff000000000000000000000000)
 
 
             /* Step (2) Making the call and getting the return result */
             // calldatasize is the size of call data in bytes
             // Make a delegate call to the addr address with
-            //      input memory from 0 to 0 + calldatasize()
+            //      input memory from 0 to 0 + calldatasize
             //      providing "gas" amount of gas
             //      the "gas" variable stores the gas amount still available to execution
             //      output area from 0 to 0 + 0
             // Effectively using the code from addr but stay in context of current contract
-            let success := delegatecall(gas, addr, 0, calldatasize(), 0, 0)
-            // let success := call(gas, addr, 0, calldatasize(), 0, 0)
+            let success := delegatecall(gas, addr, 0, calldatasize, 0, 0)
+            // let success := call(gas, addr, 0, calldatasize, 0, 0)
 
             // returndatasize() returns the size of the last return data
             // copy returndatasize() bytes from position 0 of returndata to position 0 of mememory
