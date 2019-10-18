@@ -90,7 +90,9 @@ contract proxy {
             // Load all data from storage data starting at address 0
             // The data from storage at position 0, is the variable "address public addr"
             // Bitmask to grab the first 20bytes/40Hex/unint160 of data from the first 32bytes/64Hex of calldata memory slot to get the input address
-            let addr := and(mload(0), 0xffffffffffffffffffffffffffffffffffffffff000000000000000000000000)
+            // let addr := and(mload(0), 0xffffffffffffffffffffffffffffffffffffffff000000000000000000000000)
+            // This is also valid, by doing the mask on the calldata immediately
+            let addr := and(calldataload(0), 0xffffffffffffffffffffffffffffffffffffffff000000000000000000000000)
             
             // @Notes On what if the user sends address(0) as the address
             // When the "to" field of a transaction is empty, it means that a new contract should be created with the transaction data
