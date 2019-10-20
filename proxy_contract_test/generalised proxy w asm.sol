@@ -144,7 +144,7 @@ contract proxy {
             if eq(success, 0) { revert(0, returndatasize) }
 
             // End execution and return data memory from position 0 to 0 + returndatasize()
-            return(0, returndatasize())
+            return(0, returndatasize)
         }
     }
 }
