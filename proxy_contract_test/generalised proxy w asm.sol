@@ -132,18 +132,18 @@ contract proxy {
             // @Debug Store the call result
             sstore(3, success)
 
-            // returndatasize() returns the size of the last return data
-            // copy returndatasize() bytes from position 0 of returndata to position 0 of mememory
+            // returndatasize returns the size of the last return data
+            // copy returndatasize bytes from position 0 of returndata to position 0 of mememory
             returndatacopy(0, 0, returndatasize)
 
 
             /* Step (3) Making the call */
             // if success == 0, meaning the operation is not successful
             // revert state changes and end execution
-            // Return data memory from position 0 to 0 + returndatasize()
+            // Return data memory from position 0 to 0 + returndatasize
             if eq(success, 0) { revert(0, returndatasize) }
 
-            // End execution and return data memory from position 0 to 0 + returndatasize()
+            // End execution and return data memory from position 0 to 0 + returndatasize
             return(0, returndatasize)
         }
     }
