@@ -125,8 +125,12 @@ contract proxy {
             //      the "gas" variable stores the gas amount still available to execution
             //      output area from 0 to 0 + 0
             // Effectively using the code from addr but stay in context of current contract
-            let success := delegatecall(gas, addr, 0, calldatasize, 0, 0)
-            // let success := call(gas, addr, 0, calldatasize, 0, 0)
+            // let success := delegatecall(gas, addr, 0, calldatasize, 0, 0)
+            // Same operation but make the call/code-execution in that contract's state context
+            let success := call(gas, addr, callvalue, 0, calldatasize, 0, 0)
+            
+            // @Debug Store the call result
+            sstore(3, success)
 
             // returndatasize() returns the size of the last return data
             // copy returndatasize() bytes from position 0 of returndata to position 0 of mememory
