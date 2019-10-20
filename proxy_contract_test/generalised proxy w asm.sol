@@ -26,7 +26,7 @@ contract proxy {
     // address public addr; // sstore(1, )
     bytes32 public txData; // sstore(2, )
     bool public res; // sstore(3, )
-
+    bytes32 public return_value; // sstore(4, )
 
     /// @dev Constructor used for setting contract owner address
     constructor() public {
@@ -136,8 +136,7 @@ contract proxy {
             // copy returndatasize bytes from position 0 of returndata to position 0 of mememory
             returndatacopy(0, 0, returndatasize)
 
-
-            /* Step (3) Making the call */
+            /* Step (3) Checking return value and ending function */
             // if success == 0, meaning the operation is not successful
             // revert state changes and end execution
             // Return data memory from position 0 to 0 + returndatasize
