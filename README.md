@@ -23,6 +23,11 @@ Smart Contract Wallet is a Blockchain wallet/account that runs as a piece of cod
     - Directory for all the smart contracts of this Smart Contract Wallet
     - Basically what will be deployed.
 
+## On truffle usage
+#### Contract Deployment/Migration
+- When you use "truffle migrate" or "truffle migrate --reset", the address of the contract is changed since it is redeployed and the new contract address is determined by the nonce value which never repeats.
+- This means that when you are using truffle console, and you did not restart the shell, when you try to access the ABI again, you get the old address of the contract, which will seem as if nothing has changed.
+- The easiest fix for this is to just restart the truffle console shell.
 
 ## Q&A
 - Who will pay for the smart contract wallet deployment?
