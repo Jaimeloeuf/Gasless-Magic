@@ -11,7 +11,7 @@
 pragma solidity ^0.5.11;
 
 /* Proxy contract that makes a call to the dapp contract to modify the dapp's state */
-contract proxy {
+contract proxy_execution {
     /* Events used for debugging */
     event debug(string, bytes);
     event debug(string, uint256);
@@ -20,31 +20,12 @@ contract proxy {
     // Remember to offset when using storage and coming out with the storage layout
     address public owner;
 
-
     // @Debug Variables used for debugging to view in the Remix UI
     bytes32 public addr; // sstore(1, )
     // address public addr; // sstore(1, )
     bytes32 public txData; // sstore(2, )
     bool public res; // sstore(3, )
     bytes32 public return_value; // sstore(4, )
-
-    /// @dev Constructor used for setting contract owner address
-    constructor() public {
-        owner = msg.sender;
-    }
-
-    // This modifier can be edited to create multi owner, either use multisig, or either one in a map.
-    // Modifier that only allows owner of the contract to pass
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner can call this restricted function");
-        _;
-    }
-
-    /// @dev Function for changing the owner of the contract
-    /// @param new_owner Is a payable address which will now own/inherit the contract
-    function changeOwner(address payable new_owner) public onlyOwner {
-        owner = new_owner;
-    }
 
     /// @dev Fallback function forwards all transactions and returns all received return data.
     // @Todo might remove the modifier and implement check inside function
@@ -135,6 +116,8 @@ contract proxy {
             // returndatasize returns the size of the last return data
             // copy returndatasize bytes from position 0 of returndata to position 0 of mememory
             returndatacopy(0, 0, returndatasize)
+
+            sstore(4, mload(0))
 
             /* Step (3) Checking return value and ending function */
             // if success == 0, meaning the operation is not successful
