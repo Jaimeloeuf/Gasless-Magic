@@ -9,11 +9,11 @@ contract Executor {
     event ContractCreation(address newContract);
 
     // Execute function switcher that should be called
-    function execute(address to, uint256 value, bytes memory data, uint8 operation, uint256 txGas) public returns (bool success)
+    function execute(address to, uint256 value, bytes memory data, uint8 operation, uint256 txGas) public returns (bool success, bytes memory result)
     {
         // Simple if else statement to determine the operation type
         if (operation == 0)
-            success = executeCall(to, value, data, txGas);
+            (success, result) = executeCall(to, value, data, txGas);
         else if (operation == 1)
             success = executeDelegateCall(to, data, txGas);
         else {
@@ -23,10 +23,14 @@ contract Executor {
         }
     }
 
-    function executeCall(address to, uint256 value, bytes memory data, uint256 txGas) internal returns (bool success) {
+    function executeCall(address to, uint256 value, bytes memory data, uint256 txGas) internal returns (bool success, bytes memory result) {
         // solium-disable-next-line security/no-inline-assembly
         assembly {
             success := call(txGas, to, value, add(data, 0x20), mload(data), 0, 0)
+
+            // returndatasize returns the size of the last return data
+            // copy returndatasize bytes from position 0 of returndata to position 0 of mememory
+            returndatacopy(result, 0, returndatasize)
         }
     }
 
