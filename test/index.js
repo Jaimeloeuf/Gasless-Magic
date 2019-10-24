@@ -1,5 +1,6 @@
 const Web3 = require("web3");
 
+
 // Abrevated function binding
 const print = console.log;
 
