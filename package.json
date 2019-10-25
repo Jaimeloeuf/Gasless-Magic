@@ -4,7 +4,8 @@
   "description": "Ethereum Smart Contract Wallet",
   "main": " ",
   "scripts": {
-    "test": "truffle test"
+    "test": "truffle test",
+    "full_test": "truffle test --show-events"
   },
   "repository": {
     "type": "git",
