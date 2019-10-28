@@ -5,7 +5,8 @@
   "main": " ",
   "scripts": {
     "test": "truffle test",
-    "full_test": "truffle test --show-events"
+    "full_test": "truffle test --show-events",
+    "docs": "solc --userdoc --devdoc --"
   },
   "repository": {
     "type": "git",
