@@ -1,21 +1,25 @@
 pragma solidity ^0.5.11;
 
 /**
+  * @title Contract with functions implementing different ways to forward calls.
   * @dev Make calls to any foreign implementation.
   */
 
 // Contract holding members that allow contract that inherit this make abitary contract code execution
 contract Executor {
+    /// @notice Event fired when a new contract is created, with the address of the new contract
     event ContractCreation(address newContract);
+    /// @notice Event used for debugging, and showing the amount of gas left before and after call operation, including gas used for the events itself.
     event debug(string indexed description, uint256 gasleftover);
-    
-    function execute(address to, uint256 value, bytes memory data, uint8 operation) public returns (bool success, bytes memory result) {
-        emit debug("The gas left is", gasleft());
-        (success, result) = execute_with_custom_gas(to, value, data, operation, gasleft());
-        emit debug("The gas left is", gasleft());
-    }
 
-    // Execute function switcher that should be called
+    /**
+     * @notice Base Execute function, to switch between the different types of calls
+     * @param to Address to forwards the transaction to
+     * @param value Amount of "wei" to sent along with the call
+     * @param data The actual data to send to the address to execute
+     * @param operation Hardcoded Enum of either 0/1/2 to specify which type of call operation should be performed
+     * @param txGas Amount of Gas to be used for the call
+     */
     function execute_with_custom_gas(address to, uint256 value, bytes memory data, uint8 operation, uint256 txGas) public returns (bool success, bytes memory result)
     {
         // Simple if else statement to determine the operation type
@@ -28,6 +32,16 @@ contract Executor {
             success = newContract != address(0);
             emit ContractCreation(newContract);
         }
+    }
+
+    /**
+     * @notice Wrap over "execute_with_custom_gas" function to execute with remaining gas left
+     * @notice View docs of "execute_with_custom_gas" to see the params. Matching params, except the omitted txGas.
+     */
+    function execute(address to, uint256 value, bytes memory data, uint8 operation) public returns (bool success, bytes memory result) {
+        emit debug("The gas left is", gasleft());
+        (success, result) = execute_with_custom_gas(to, value, data, operation, gasleft());
+        emit debug("The gas left is", gasleft());
     }
 
     function executeCall(address to, uint256 value, bytes memory data, uint256 txGas) private returns (bool success, bytes memory result) {
