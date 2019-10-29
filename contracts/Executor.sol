@@ -23,7 +23,7 @@ contract Executor {
         }
     }
 
-    function executeCall(address to, uint256 value, bytes memory data, uint256 txGas) internal returns (bool success, bytes memory result) {
+    function executeCall(address to, uint256 value, bytes memory data, uint256 txGas) private returns (bool success, bytes memory result) {
         // solium-disable-next-line security/no-inline-assembly
         assembly {
             success := call(txGas, to, value, add(data, 0x20), mload(data), 0, 0)
@@ -34,20 +34,17 @@ contract Executor {
         }
     }
 
-    function executeDelegateCall(address to, bytes memory data, uint256 txGas) internal returns (bool success) {
+    function executeDelegateCall(address to, bytes memory data, uint256 txGas) private returns (bool success) {
         // solium-disable-next-line security/no-inline-assembly
         assembly {
             success := delegatecall(txGas, to, add(data, 0x20), mload(data), 0, 0)
         }
     }
 
-    function executeCreate(bytes memory data) internal returns (address newContract) {
+    function executeCreate(bytes memory data) private returns (address newContract) {
         // solium-disable-next-line security/no-inline-assembly
         assembly {
             newContract := create(0, add(data, 0x20), mload(data))
         }
     }
-
-    // Empty payable callback function to allow Contract to receive Ether
-    function () external payable { }
 }
