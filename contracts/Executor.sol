@@ -7,9 +7,16 @@ pragma solidity ^0.5.11;
 // Contract holding members that allow contract that inherit this make abitary contract code execution
 contract Executor {
     event ContractCreation(address newContract);
+    event debug(string indexed description, uint256 gasleftover);
+    
+    function execute(address to, uint256 value, bytes memory data, uint8 operation) public returns (bool success, bytes memory result) {
+        emit debug("The gas left is", gasleft());
+        (success, result) = execute_with_custom_gas(to, value, data, operation, gasleft());
+        emit debug("The gas left is", gasleft());
+    }
 
     // Execute function switcher that should be called
-    function execute(address to, uint256 value, bytes memory data, uint8 operation, uint256 txGas) public returns (bool success, bytes memory result)
+    function execute_with_custom_gas(address to, uint256 value, bytes memory data, uint8 operation, uint256 txGas) public returns (bool success, bytes memory result)
     {
         // Simple if else statement to determine the operation type
         if (operation == 0)
