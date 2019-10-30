@@ -1,5 +1,5 @@
 pragma solidity ^0.5.11;
-import "./base/EtherPayableFallback.sol";
+import "./base/EthPayableFallback.sol";
 import "./Executor.sol";
 
 /**
