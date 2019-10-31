@@ -17,11 +17,19 @@ Smart Contract Wallet is a Blockchain wallet/account that runs as a piece of cod
 
 
 ## Project Structure
-- proxy_contract_test/
-    - Directory that holds its own smart contracts for testing proxy contracts out, with basic functionality to make sure the proxy contract works first.
 - contracts/
     - Directory for all the smart contracts of this Smart Contract Wallet
-    - Basically what will be deployed.
+    - Basically holds the contract will be deployed.
+- migrations/
+    - Directory for all the code used for migrating/deploying the smart contracts onto the specified chain.
+    - Will be executed in order of the prefix number of the file names.
+- skip_migrations/
+    - Empty Directory to be used as the migrations directory to skip all the migration functions if you would need to skip the migrations for whatever reasons.
+    - For example, running tests without migrating after every test run.
+- test/
+    - Tests for the smart contracts.
+    - Named after the contracts that they are testing
+    - All tests can be ran using the npm scripts like "npm run test" or "npm run full_test"
 
 ## On truffle usage
 #### Contract Deployment/Migration

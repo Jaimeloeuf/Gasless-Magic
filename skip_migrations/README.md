@@ -1,0 +1,2 @@
+# Skip Migrations, migrations folder
+This empty folder can be set to be the migration scripts folder to skip running the actual migrations scripts, which can be useful in certain situations where you want to run tests or what not without re deploying the contracts with the migrations scripts.  
