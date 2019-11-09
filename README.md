@@ -3,14 +3,22 @@ Smart Contract Wallet is a Blockchain wallet/account that runs as a piece of cod
 
 
 ## Main features
-- Gasless wallet deployment
-    - As a smart contract wallet is a smart contract, deployment of a smart contract wallet requires gas from the deploying party, thus to remove this UX barrier especially for users who just encountered blockchain for the first time, a Gasless deployment system will be used.
-    - Basically the deployment party of the wallet will be Torus which to the user will be invisible and free.
+- Gasless Wallet Deployment
+    - A smart contract wallet is a smart contract, which requires gas from the user to deploy, thus a Gasless deployment system will be used to remove this UX barrier especially for users who just encountered blockchain for the first time, and do not wish to pay a fee just to get a wallet to hold funds.
+    - Deployment party of the wallet should be a Relayer which will make deployment to the user seem invisible and free.
     - Done using meta transaction and CREATE2
 - Gas Abstraction
-    - Where the Smart Contract wallet provider pays for the user's gas to increase user adoption
-    - Done with Meta transactions
-    - Invisible to the user, and does not require any work on the user's end
+    - Gas abstraction is to remove the need to think about gas fee when using dapps on the Ethereum network for the users.
+    - Gas abstractions, regardless of how it is implemented, will allow users to do things like hold DAI only accounts and do ETH-Less transactions!
+    - The types of Gas abstractions that will be implemented are:
+        - Gasless Transactions
+            - Smart Contract wallet provider pays for the user's gas to increase user adoption.
+            - Done using Meta transactions, where the provider signs on the user transaction to pay for the gas.
+            - Invisible to the user, as it will not require any work on the user's end.
+        - Pay for Gas in ERC20 tokens or other forms of currency
+            - Smart Contract wallet provider runs a relayer to pay for the user's gas in ETH, before making the user's smart contract wallet pay back the fee in any accepted token of equal value to the gas fee.
+            - Done using Meta transactions, where the providers signs on the users transaction to pay for the gas first.
+            - User would be able to see this option and choose to pay for the gas fee in their desired token / payment method.
 - Integration with Torus wallet (Web2.0 convenience for Web3.0)
     - Integrates with the well established Torus EOA "wallet" that gives you the ease of use of Web2.0 systems like Google Logins for Web3.0 softwares.
     - Readmore at the [website](https://tor.us)
@@ -31,11 +39,13 @@ Smart Contract Wallet is a Blockchain wallet/account that runs as a piece of cod
     - Named after the contracts that they are testing
     - All tests can be ran using the npm scripts like "npm run test" or "npm run full_test"
 
+
 ## On truffle usage
 #### Contract Deployment/Migration
 - When you use "truffle migrate" or "truffle migrate --reset", the address of the contract is changed since it is redeployed and the new contract address is determined by the nonce value which never repeats.
 - This means that when you are using truffle console, and you did not restart the shell, when you try to access the ABI again, you get the old address of the contract, which will seem as if nothing has changed.
 - The easiest fix for this is to just restart the truffle console shell.
+
 
 ## Q&A
 - Who will pay for the smart contract wallet deployment?
@@ -62,7 +72,7 @@ Smart Contract Wallet is a Blockchain wallet/account that runs as a piece of cod
 
 ## Credits
 This project is heavily influenced by the from many sources, some of which are:
-- The [Gnosis Safe project](https://github.com/gnosis/safe-contracts)
+- [Gnosis Safe](https://github.com/gnosis/safe-contracts)
 - [Argent wallet](https://www.argent.xyz)
 - [Austin Griffith's work on Meta transactions](https://metatx.io)
 - [Tabookey's GSN implementation](https://github.com/tabookey/tabookey-gasless)
