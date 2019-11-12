@@ -8,7 +8,10 @@
         "pretest": "npm run lint:js",
         "test": "truffle test",
         "full_test": "npm run pretest && truffle test --show-events",
-        "docs": "solc --userdoc --devdoc --"
+        "docs": "solc --userdoc --devdoc --",
+        "docs_all": "solc --userdoc --devdoc **/**.sol",
+        "gas": "solc --gas --",
+        "get_hash": "solc --hashes"
     },
     "repository": {
         "type": "git",
