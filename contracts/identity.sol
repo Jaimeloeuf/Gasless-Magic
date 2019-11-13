@@ -8,9 +8,7 @@ import "./Executor.sol";
  * @notice Inherits the executor contract for call forwarding
  */
 contract Identity is EthPayableFallback, Executor {
-    /// @notice Event only used for debugging during local development, will be removed before production
-    event debug(string description);
-    event debug(string description, uint256 gas);
+    event OwnerUpdate(string indexed update_type, address indexed owner);
 
     /// @notice Threshold required for transaction to be valid
     uint256 public threshold;
@@ -43,6 +41,6 @@ contract Identity is EthPayableFallback, Executor {
         require(!isOwner[new_owner], "Address is already an owner!"); // Make sure address sent is not already an owner
         isOwner[new_owner] = true;
         ownersCount += 1; // Increment number of owners after owner has been added
-        emit OwnerAdded(_owner); // Emit event
+        emit OwnerUpdate("Added", new_owner);
     }
 }

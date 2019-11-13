@@ -11,6 +11,8 @@ contract EthPayableFallback {
     /// @notice Fallback function making child contracts accept ETH.
     /// @notice Has to have these function modifiers to be valid.
     function () external payable {
+        /// @notice msg.value (uint): number of wei sent with the message
+        /// @notice address of sender logged too
         emit Received(msg.value, msg.sender);
     }
 }
