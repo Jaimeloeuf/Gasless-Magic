@@ -36,6 +36,7 @@
         "eslint": "^6.6.0",
         "eslint-plugin-truffle": "^0.3.1",
         "ganache-core": "^2.8.0",
+        "gasless-relayer": "git+https://github.com/Jaimeloeuf/Gasless-Relayer.git",
         "request": "^2.88.0",
         "truffle": "^5.0.37"
     }
