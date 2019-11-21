@@ -6,6 +6,7 @@ const print = console.log;
 
 const Web3 = require("web3");
 const ganache = require("ganache-core");
+const request = require("request");
 
 /**
  * @notice Create a ganache testnet with custom accounts
@@ -13,44 +14,56 @@ const ganache = require("ganache-core");
  */
 const web3 = new Web3(ganache.provider({
 	accounts: [
-		{ balance: "0x10" },
+		{ balance: "0xDE0B6B3A7640000" }, // Hexadecimal for 1 ETH in wei
 		{ balance: "0x0" },
 		{ balance: "0x0" },
 	]
 }));
 
-describe("Gasless Transaction", async function () {
+describe("Gasless Transaction", function () {
 
-	const Identity = require("../build/contracts/Identity").abi;
-	const Dapp = require("../build/contracts/Dapp").abi;
 
-	const request = require("request");
+	/** @notice Create the variables for the different accounts */
+	let accounts, acc_ETH, acc_ETHless1, acc_ETHless2;
 
-	let relayer_URL;
+	/** @notice Variables for the contract build files */
+	let Identity, Dapp;
 
-	before(function () {
-		/** @notice Injects the values into the  */
-		// Below are the configuration needed for testing with the relayer
+	/** @notice Variables for the final contract objects */
+	let identity, dapp;
+
+	/** @notice Base/Root URL of the relayer */
+	let relayer_host;
+
+
+	/** @notice First before hook to setup accounts and build files */
+	before(async function () {
+		accounts = await web3.eth.getAccounts();
+		acc_ETH = accounts[0];
+		acc_ETHless1 = accounts[1];
+		acc_ETHless2 = accounts[2];
+
+		// Get contract build files
+		Identity = require("../build/contracts/Identity");
+		Dapp = require("../build/contracts/Dapp");
+	});
+
+	/** @notice Setup Env variables and relayer */
+	before(async function () {
+		/** @notice Inject configurations for testing relayer into the environmental variables */
 		process.env.PORT = 3000;
+		// Put a private key from the created ganache
 		process.env.PRIVATE_KEY = "0x7ab741b57e8d94dd7e1a29055646bafde7010f38a900f55bbd7647880faa6ee8";
 		process.env.WEB3_PROVIDER_URL = "https://rinkeby.infura.io/048a00ef79744b2c81a02d2352428843";
 
 		// Get the values out so they can be used later on
 		const { PORT, PRIVATE_KEY, WEB3_PROVIDER_URL } = process.env;
 
-		relayer_URL = `http://localhost:${PORT}`;
-
 		// Require the gasless-relayer server to start it. Wait for server to start before proceeding with await
 		await require("gasless-relayer");
-		print(`Interacting with Gasless Relayer server at: '${relayer_URL}'`);
-	});
 
-
-	let identity;
-	let dapp;
-
-	beforeEach("setup", async function () {
-		identity = (new web3.eth.Contract(Identity)).deploy();
-		dapp = (new web3.eth.Contract(Dapp)).deploy();
+		// Construct the Base/Root URL
+		relayer_host = `http://localhost:${PORT}`;
+		print(`Interacting with Gasless Relayer server at: '${relayer_host}'`);
 	});
 });
