@@ -48,6 +48,7 @@ describe("Gasless Transaction", function () {
 		Dapp = require("../build/contracts/Dapp");
 	});
 
+
 	/** @notice Setup Env variables and relayer */
 	before(async function () {
 		/** @notice Inject configurations for testing relayer into the environmental variables */
@@ -65,5 +66,22 @@ describe("Gasless Transaction", function () {
 		// Construct the Base/Root URL
 		relayer_host = `http://localhost:${PORT}`;
 		print(`Interacting with Gasless Relayer server at: '${relayer_host}'`);
+	});
+
+
+	beforeEach("setup", async function () {
+		// Create new contract object instance
+		const IdentityContract = await new web3.eth.Contract(Identity.abi);
+		const DappContract = await new web3.eth.Contract(Dapp.abi);
+
+		// Deploy the contract
+		identity = await IdentityContract.deploy({ data: Identity.bytecode }).send({
+			from: accounts[0],
+			gas: 4712388
+		});
+		dapp = await DappContract.deploy({ data: Dapp.bytecode }).send({
+			from: accounts[0],
+			gas: 4712388
+		});
 	});
 });
