@@ -29,7 +29,10 @@ describe("Gasless Transaction", function () {
 	/** @notice Variables for the contract build files */
 	let Identity, Dapp;
 
-	/** @notice Variables for the final contract objects */
+	/** @notice Variables for newly created contract objects */
+	let IdentityContract, DappContract;
+
+	/** @notice Variables for the final deployed contract objects */
 	let identity, dapp;
 
 	/** @notice Base/Root URL of the relayer */
@@ -71,17 +74,11 @@ describe("Gasless Transaction", function () {
 
 	beforeEach("setup", async function () {
 		// Create new contract object instance
-		const IdentityContract = await new web3.eth.Contract(Identity.abi);
-		const DappContract = await new web3.eth.Contract(Dapp.abi);
+		IdentityContract = await new web3.eth.Contract(Identity.abi);
+		DappContract = await new web3.eth.Contract(Dapp.abi);
 
 		// Deploy the contract
-		identity = await IdentityContract.deploy({ data: Identity.bytecode }).send({
-			from: accounts[0],
-			gas: 4712388
-		});
-		dapp = await DappContract.deploy({ data: Dapp.bytecode }).send({
-			from: accounts[0],
-			gas: 4712388
-		});
+		identity = await IdentityContract.deploy({ data: Identity.bytecode }).send({ from: accounts[0], gas: 4712388 });
+		dapp = await DappContract.deploy({ data: Dapp.bytecode }).send({ from: accounts[0], gas: 4712388 });
 	});
 });
