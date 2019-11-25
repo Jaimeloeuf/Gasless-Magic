@@ -22,6 +22,7 @@ const web3 = new Web3(ganache.provider({
 }));
 
 describe("Gasless Transaction", function () {
+	this.timeout(10000); // 10 Seconds timeout
 
 
 	/** @notice Create the variables for the different accounts */
@@ -102,5 +103,26 @@ describe("Gasless Transaction", function () {
 
 		const finalValueOfN = await dapp.methods.n().call();
 		assert(finalValueOfN === new_value, "Value of N should be changed");
+
+		const finalSender = await dapp.methods.sender().call();
+		assert(acc_ETH === finalSender, "Account with ETH is not stored as account that made the call to setN()");
+	});
+
+	it("Proxy calls changes state of dapp with execute()", async function () {
+		const new_value = "2345"; // Value to be set for N
+		// @Todo For some reasons, bigger values tend to fail
+
+		/** @notice Create the transaction Data needed to call setN() on dapp contract */
+		const encodedTxData = dapp.methods.setN(new_value).encodeABI();
+		await dapp.methods.setN(new_value).estimateGas();
+
+		/** @notice Use execute method of identity contract to proxy the execution of setN() */
+		await identity.methods.execute(dapp.options.address, 0, encodedTxData, 0).send({ from: acc_ETH, gas: 4170000 });
+
+		const finalN = await dapp.methods.n().call();
+		const finalSender = await dapp.methods.sender().call();
+
+		assert(finalN === new_value, "Proxied call failed to change state in 'dapp' contract");
+		assert(identity.options.address === finalSender, "Dapp did not set address of identity as the 'sender' variable");
 	});
 });
