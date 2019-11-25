@@ -38,6 +38,9 @@ describe("Gasless Transaction", function () {
 	/** @notice Base/Root URL of the relayer */
 	let relayer_host;
 
+	/** @notice Variable to temporarily store the estimated Gas Limit of contract method executions */
+	let gasEstimate;
+
 
 	/** @notice First before hook to setup accounts and build files */
 	before(async function () {
@@ -57,6 +60,7 @@ describe("Gasless Transaction", function () {
 		/** @notice Inject configurations for testing relayer into the environmental variables */
 		process.env.PORT = 3000;
 		// Put a private key from the created ganache
+		// @Todo Update this to use a mnemonic, so it is always the same? Or is it actually needed
 		process.env.PRIVATE_KEY = "0x7ab741b57e8d94dd7e1a29055646bafde7010f38a900f55bbd7647880faa6ee8";
 		process.env.WEB3_PROVIDER_URL = "https://rinkeby.infura.io/048a00ef79744b2c81a02d2352428843";
 
@@ -64,7 +68,7 @@ describe("Gasless Transaction", function () {
 		const { PORT, PRIVATE_KEY, WEB3_PROVIDER_URL } = process.env;
 
 		// Require the gasless-relayer server to start it. Wait for server to start before proceeding with await
-		await require("gasless-relayer");
+		const app = await require("gasless-relayer");
 
 		// Construct the Base/Root URL
 		relayer_host = `http://localhost:${PORT}`;
@@ -77,8 +81,15 @@ describe("Gasless Transaction", function () {
 		IdentityContract = await new web3.eth.Contract(Identity.abi);
 		DappContract = await new web3.eth.Contract(Dapp.abi);
 
-		// Deploy the contract
-		identity = await IdentityContract.deploy({ data: Identity.bytecode }).send({ from: accounts[0], gas: 4712388 });
-		dapp = await DappContract.deploy({ data: Dapp.bytecode }).send({ from: accounts[0], gas: 4712388 });
+		/** @notice Deploy the contracts */
+		gasEstimate = await IdentityContract.deploy({ data: Identity.bytecode }).estimateGas();
+		identity = await IdentityContract.deploy({ data: Identity.bytecode }).send({ from: acc_ETH, gas: gasEstimate });
+
+		gasEstimate = await DappContract.deploy({ data: Dapp.bytecode }).estimateGas();
+		dapp = await DappContract.deploy({ data: Dapp.bytecode }).send({ from: acc_ETH, gas: gasEstimate });
 	});
+
+
+	/** @notice Generic function to estimate Gas for contract methods with a 10% error of margin */
+	const estimateGas = async (method, input) => Math.trunc(await method(input).estimateGas() * 1.1);
 });
