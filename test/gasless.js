@@ -4,6 +4,7 @@
 
 const print = console.log;
 
+const assert = require("assert");
 const Web3 = require("web3");
 const ganache = require("ganache-core");
 const request = require("request");
@@ -90,6 +91,16 @@ describe("Gasless Transaction", function () {
 	});
 
 
-	/** @notice Generic function to estimate Gas for contract methods with a 10% error of margin */
-	const estimateGas = async (method, input) => Math.trunc(await method(input).estimateGas() * 1.1);
+	it("Value of n can be updated", async function () {
+		const new_value = "12345"; // Value to be set for N
+
+		const initialValueOfN = await dapp.methods.n().call();
+		assert(initialValueOfN === "0", "Value of N should start with 0");
+
+		/** @notice Make the call from the account with ETH */
+		await dapp.methods.setN(new_value).send({ from: acc_ETH });
+
+		const finalValueOfN = await dapp.methods.n().call();
+		assert(finalValueOfN === new_value, "Value of N should be changed");
+	});
 });
