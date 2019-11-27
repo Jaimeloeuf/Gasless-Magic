@@ -63,6 +63,7 @@ describe("Gasless Transaction", function () {
 		process.env.PORT = 3000;
 		// Put a private key from the created ganache
 		// @Todo Update this to use a mnemonic, so it is always the same? Or is it actually needed
+		// Or I can just inject the private key of the acc_ETH created above
 		process.env.PRIVATE_KEY = "0x7ab741b57e8d94dd7e1a29055646bafde7010f38a900f55bbd7647880faa6ee8";
 		process.env.WEB3_PROVIDER_URL = "https://rinkeby.infura.io/048a00ef79744b2c81a02d2352428843";
 
@@ -108,13 +109,13 @@ describe("Gasless Transaction", function () {
 		assert(acc_ETH === finalSender, "Account with ETH is not stored as account that made the call to setN()");
 	});
 
+
 	it("Proxy calls changes state of dapp with execute()", async function () {
 		const new_value = "2345"; // Value to be set for N
 		// @Todo For some reasons, bigger values tend to fail
 
 		/** @notice Create the transaction Data needed to call setN() on dapp contract */
 		const encodedTxData = dapp.methods.setN(new_value).encodeABI();
-		await dapp.methods.setN(new_value).estimateGas();
 
 		/** @notice Use execute method of identity contract to proxy the execution of setN() */
 		await identity.methods.execute(dapp.options.address, 0, encodedTxData, 0).send({ from: acc_ETH, gas: 4170000 });
@@ -124,5 +125,36 @@ describe("Gasless Transaction", function () {
 
 		assert(finalN === new_value, "Proxied call failed to change state in 'dapp' contract");
 		assert(identity.options.address === finalSender, "Dapp did not set address of identity as the 'sender' variable");
+	});
+
+
+	it("Gasless-Relayer is up and running. /Ping route is tested to work", async function () {
+
+		/** @function Generic function to do assertion testing */
+		function assertion_checks(error, statusCode, body) {
+			print(arguments); // Print out all the input arguements if needed
+
+			assert(!error, "Error when calling relayer with callback method");
+			assert(statusCode === 200, "Status Code returned is not as expected");
+			assert(body != false, "Request body was empty"); // Print the HTML for the Google homepage.
+		}
+
+		async function Callback_request() {
+			/** @notice Extract and pass in the statusCode in the wrapped callback function */
+			request.get(`${relayer_host}/ping`, (error, response, body) => assertion_checks(error, response.statusCode, body));
+		}
+
+		async function Async_Await_request() {
+			/** @notice Promisify the method with the Node JS build in utility library */
+			const get = require("util").promisify(request.get);
+			const res = await get(`${relayer_host}/ping`);
+			assertion_checks(res.error, res.statusCode, res.body);
+		}
+
+		/** @notice Call the sub tests 1 by 1 */
+		print("Running test using callback method");
+		await Callback_request();
+		print("Running test using async/await method");
+		await Async_Await_request();
 	});
 });
