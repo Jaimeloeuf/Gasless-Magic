@@ -1,16 +1,20 @@
 pragma solidity ^0.5.11;
+import "./base/Owned.sol";
 
 /**
-  * @title Contract with functions implementing different ways to forward calls.
-  * @dev Make calls to any foreign implementation.
-  */
+ * @title Contract implementing different ways to forward calls
+ * @notice Make calls to any foreign implementation or any other abitary contract code execution
+ *
+ * Contracts inherited:
+ * @notice Inherits Owned base contract for all owner related implementations and modifiers
+ */
+contract Executor is Owned {
 
-// Contract holding members that allow contract that inherit this make abitary contract code execution
-contract Executor {
+    /// @notice Debug event for gas left before and after call operations, includes gas used for the events itself.
+    event GasLeft(uint256 gasleftover);
     /// @notice Event fired when a new contract is created, with the address of the new contract
     event ContractCreation(address newContract);
-    /// @notice Event used for debugging, and showing the amount of gas left before and after call operation, including gas used for the events itself.
-    event debug(string indexed description, uint256 gasleftover);
+
 
     /**
      * @notice Base Execute function, to switch between the different types of calls
@@ -20,7 +24,7 @@ contract Executor {
      * @param operation Hardcoded Enum of either 0/1/2 to specify which type of call operation should be performed
      * @param txGas Amount of Gas to be used for the call
      */
-    function execute_with_custom_gas(address to, uint256 value, bytes memory data, uint8 operation, uint256 txGas) public returns (bool success, bytes memory result)
+    function execute_with_custom_gas(address to, uint256 value, bytes memory data, uint8 operation, uint256 txGas) public onlyOwners returns (bool success, bytes memory result)
     {
         // Simple if else statement to determine the operation type
         if (operation == 0)
@@ -34,16 +38,19 @@ contract Executor {
         }
     }
 
+
     /**
      * @notice Wrap over "execute_with_custom_gas" function to execute with remaining gas left
      * @notice View docs of "execute_with_custom_gas" to see the params. Matching params, except the omitted txGas.
      */
-    function execute(address to, uint256 value, bytes memory data, uint8 operation) public returns (bool success, bytes memory result) {
-        emit debug("The gas left is", gasleft());
+    function execute(address to, uint256 value, bytes memory data, uint8 operation) public onlyOwners returns (bool success, bytes memory result) {
+        emit GasLeft(gasleft());
         (success, result) = execute_with_custom_gas(to, value, data, operation, gasleft());
-        emit debug("The gas left is", gasleft());
+        emit GasLeft(gasleft());
     }
 
+
+    /// @notice Private Modifier - To ensure that this internal method can only be called from within this contract
     function executeCall(address to, uint256 value, bytes memory data, uint256 txGas) private returns (bool success, bytes memory result) {
         // solium-disable-next-line security/no-inline-assembly
         assembly {
@@ -55,6 +62,8 @@ contract Executor {
         }
     }
 
+
+    /// @notice Private Modifier - To ensure that this internal method can only be called from within this contract
     function executeDelegateCall(address to, bytes memory data, uint256 txGas) private returns (bool success) {
         // solium-disable-next-line security/no-inline-assembly
         assembly {
@@ -62,6 +71,8 @@ contract Executor {
         }
     }
 
+
+    /// @notice Private Modifier - To ensure that this internal method can only be called from within this contract
     function executeCreate(bytes memory data) private returns (address newContract) {
         // solium-disable-next-line security/no-inline-assembly
         assembly {
