@@ -9,17 +9,21 @@ const Web3 = require("web3");
 const ganache = require("ganache-core");
 const request = require("request");
 
+
 /**
  * @notice Create a ganache testnet with custom accounts
  * @notice Create 1 account with ETH and 2 more account without any ETH
  */
-const web3 = new Web3(ganache.provider({
+
+const ganacheProvider = ganache.provider({
 	accounts: [
 		{ balance: "0xDE0B6B3A7640000" }, // Hexadecimal for 1 ETH in wei
 		{ balance: "0x0" },
 		{ balance: "0x0" },
 	]
-}));
+});
+const web3 = new Web3(ganacheProvider);
+
 
 describe("Gasless Transaction", function () {
 	this.timeout(10000); // 10 Seconds timeout
@@ -60,15 +64,20 @@ describe("Gasless Transaction", function () {
 	/** @notice Setup Env variables and relayer */
 	before(async function () {
 		/** @notice Inject configurations for testing relayer into the environmental variables */
+
+		// PORT for relayer to use
 		process.env.PORT = 3000;
-		// Put a private key from the created ganache
-		// @Todo Update this to use a mnemonic, so it is always the same? Or is it actually needed
-		// Or I can just inject the private key of the acc_ETH created above
-		process.env.PRIVATE_KEY = "0x7ab741b57e8d94dd7e1a29055646bafde7010f38a900f55bbd7647880faa6ee8";
-		process.env.WEB3_PROVIDER_URL = "https://rinkeby.infura.io/048a00ef79744b2c81a02d2352428843";
+
+		// Read privateKey directly from ganacheProvider for relayer to use
+		// @Todo Explore using a fixed mnemonic, so it is always the same? Or is it actually needed
+		let privateKey = "0x" + ganacheProvider.manager.state.accounts[acc_ETH.toLowerCase()].secretKey.toString("hex");
+		// Simple assertion test to make sure the privateKey is correct
+		assert(web3.eth.accounts.privateKeyToAccount(privateKey).address === acc_ETH);
+
+		process.env.PRIVATE_KEY = privateKey;
 
 		// Get the values out so they can be used later on
-		const { PORT, PRIVATE_KEY, WEB3_PROVIDER_URL } = process.env;
+		const { PORT, PRIVATE_KEY } = process.env;
 
 		// Require the gasless-relayer server to start it. Wait for server to start before proceeding with await
 		const app = await require("gasless-relayer");
