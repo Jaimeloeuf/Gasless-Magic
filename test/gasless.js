@@ -23,6 +23,13 @@ const server = ganache.server({
 	port: 2001
 });
 const ganacheProvider = server.provider;
+server.listen(function (err, blockchain) {
+	if (err) {
+		print("Ganache-core server failed to start/listen to port");
+		throw err; // Throw error if unable to start ganache-core at all
+	}
+	// Debug: blockchain -> The full ganache object
+});
 const web3 = new Web3(ganacheProvider);
 
 
