@@ -14,14 +14,15 @@ const request = require("request-promise-native");
  * @notice Create a ganache testnet with custom accounts
  * @notice Create 1 account with ETH and 2 more account without any ETH
  */
-
-const ganacheProvider = ganache.provider({
+const server = ganache.server({
 	accounts: [
 		{ balance: "0xDE0B6B3A7640000" }, // Hexadecimal for 1 ETH in wei
 		{ balance: "0x0" },
 		{ balance: "0x0" },
-	]
+	],
+	port: 2001
 });
+const ganacheProvider = server.provider;
 const web3 = new Web3(ganacheProvider);
 
 
