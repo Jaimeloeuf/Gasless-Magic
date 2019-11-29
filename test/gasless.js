@@ -7,7 +7,7 @@ const print = console.log;
 const assert = require("assert");
 const Web3 = require("web3");
 const ganache = require("ganache-core");
-const request = require("request");
+const request = require("request-promise-native");
 
 
 /**
@@ -138,32 +138,9 @@ describe("Gasless Transaction", function () {
 
 
 	it("Gasless-Relayer is up and running. /Ping route is tested to work", async function () {
-
-		/** @function Generic function to do assertion testing */
-		function assertion_checks(error, statusCode, body) {
-			print(arguments); // Print out all the input arguements if needed
-
-			assert(!error, "Error when calling relayer with callback method");
-			assert(statusCode === 200, "Status Code returned is not as expected");
-			assert(body != false, "Request body was empty"); // Print the HTML for the Google homepage.
-		}
-
-		async function Callback_request() {
-			/** @notice Extract and pass in the statusCode in the wrapped callback function */
-			request.get(`${relayer_host}/ping`, (error, response, body) => assertion_checks(error, response.statusCode, body));
-		}
-
-		async function Async_Await_request() {
-			/** @notice Promisify the method with the Node JS build in utility library */
-			const get = require("util").promisify(request.get);
-			const res = await get(`${relayer_host}/ping`);
-			assertion_checks(res.error, res.statusCode, res.body);
-		}
-
-		/** @notice Call the sub tests 1 by 1 */
-		print("Running test using callback method");
-		await Callback_request();
-		print("Running test using async/await method");
-		await Async_Await_request();
+		// Parse the response value as JSON before testing
+		const res = JSON.parse(await request.get(`${relayer_host}/ping`));
+		assert(res.status === 200, "Status Code returned is not as expected");
+		assert(res.body != false, "Request body was empty"); // Print the HTML for the Google homepage.
 	});
 });
