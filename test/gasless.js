@@ -30,8 +30,11 @@ describe("Gasless Transaction", function () {
 	this.timeout(10000); // 10 Seconds timeout
 
 
+	/** @notice Create variable for the gasless-relayer Express App */
+	let app;
+
 	/** @notice Create the variables for the different accounts */
-	let accounts, acc_ETH, acc_ETHless1, acc_ETHless2;
+	let accounts, acc_ETH, acc_ETHless;
 
 	/** @notice Variables for the contract build files */
 	let Identity, Dapp;
@@ -53,8 +56,7 @@ describe("Gasless Transaction", function () {
 	before(async function () {
 		accounts = await web3.eth.getAccounts();
 		acc_ETH = accounts[0];
-		acc_ETHless1 = accounts[1];
-		acc_ETHless2 = accounts[2];
+		acc_ETHless = accounts[1];
 
 		// Get contract build files
 		Identity = require("../build/contracts/Identity");
@@ -143,5 +145,11 @@ describe("Gasless Transaction", function () {
 		const res = JSON.parse(await request.get(`${relayer_host}/ping`));
 		assert(res.status === 200, "Status Code returned is not as expected");
 		assert(res.body != false, "Request body was empty"); // Print the HTML for the Google homepage.
+	});
+
+
+	after(async function () {
+		// Await so that it only continues after the callback function is called. @Todo to verify if this is deterministic
+		await app.close(() => print("Server stopped and port closed"));
 	});
 });
