@@ -59,8 +59,7 @@ describe("Gasless Transaction", function () {
 	let gasEstimate;
 
 
-	/** @notice First before hook to setup accounts and build files */
-	before(async function () {
+	before("Create ETH accounts and read Build files", async function () {
 		accounts = await web3.eth.getAccounts();
 		acc_ETH = accounts[0];
 		acc_ETHless = accounts[1];
@@ -71,8 +70,7 @@ describe("Gasless Transaction", function () {
 	});
 
 
-	/** @notice Setup Env variables and relayer */
-	before(async function () {
+	before("Setup Env variables for gasless-relayer", async function () {
 		/** @notice Inject configurations for testing relayer into the environmental variables */
 
 		// PORT for relayer to use
@@ -84,13 +82,17 @@ describe("Gasless Transaction", function () {
 		// Simple assertion test to make sure the privateKey is correct
 		assert(web3.eth.accounts.privateKeyToAccount(privateKey).address === acc_ETH);
 
+		// Set the privateKey for the account "acc_ETH"
 		process.env.PRIVATE_KEY = privateKey;
+
+		// The Web3 provider's URL of gasless-relayer should be the ganache-core server started in this test
+		process.env.WEB3_PROVIDER_URL = `http://localhost:${ganacheProvider.options.port}`;
 
 		// Get the values out so they can be used later on
 		const { PORT, PRIVATE_KEY } = process.env;
 
 		// Require the gasless-relayer server to start it. Wait for server to start before proceeding with await
-		const app = await require("gasless-relayer");
+		app = await require("gasless-relayer");
 
 		// Construct the Base/Root URL
 		relayer_host = `http://localhost:${PORT}`;
@@ -98,7 +100,7 @@ describe("Gasless Transaction", function () {
 	});
 
 
-	beforeEach("setup", async function () {
+	beforeEach("Create and deploy new set of Contracts for each test", async function () {
 		// Create new contract object instance
 		IdentityContract = await new web3.eth.Contract(Identity.abi);
 		DappContract = await new web3.eth.Contract(Dapp.abi);
@@ -155,8 +157,14 @@ describe("Gasless Transaction", function () {
 	});
 
 
-	after(async function () {
+	after("After hook to close gasless-relayer server and ganache-core server", async function () {
 		// Await so that it only continues after the callback function is called. @Todo to verify if this is deterministic
 		await app.close(() => print("Server stopped and port closed"));
+
+		// Close the ganache-core server, throw the error if it fails
+		server.close(function (err) {
+			if (err)
+				throw (err);
+		});
 	});
 });
