@@ -1,5 +1,7 @@
 /**
  * @title Mocha based test file for gasless transactions
+ * 
+ * @Todo Change the PORT of ganache-core server which is now hardcoded to 2001
  */
 
 const print = console.log;
@@ -10,32 +12,12 @@ const ganache = require("ganache-core");
 const request = require("request-promise-native");
 
 
-/**
- * @notice Create a ganache testnet with custom accounts
- * @notice Create 1 account with ETH and 2 more account without any ETH
- */
-const server = ganache.server({
-	accounts: [
-		{ balance: "0xDE0B6B3A7640000" }, // Hexadecimal for 1 ETH in wei
-		{ balance: "0x0" },
-		{ balance: "0x0" },
-	],
-	port: 2001
-});
-const ganacheProvider = server.provider;
-server.listen(function (err, blockchain) {
-	if (err) {
-		print("Ganache-core server failed to start/listen to port");
-		throw err; // Throw error if unable to start ganache-core at all
-	}
-	// Debug: blockchain -> The full ganache object
-});
-const web3 = new Web3(ganacheProvider);
-
-
 describe("Gasless Transaction", function () {
 	this.timeout(10000); // 10 Seconds timeout
 
+
+	/** @notice Create variables for ganache and web3 */
+	let server, ganacheProvider, web3;
 
 	/** @notice Create variable for the gasless-relayer Express App */
 	let app;
@@ -59,6 +41,39 @@ describe("Gasless Transaction", function () {
 	let gasEstimate;
 
 
+	before("Setup ganache and web3", async function () {
+		/**
+         * @notice Create a ganache testnet with custom accounts
+         * @notice Create 1 account with ETH and 2 more account without any ETH
+         * @notice Run ganache-core server on the hardcoded PORT 2001
+         */
+		server = ganache.server({
+			accounts: [
+				{ balance: "0xDE0B6B3A7640000" }, // Hexadecimal for 1 ETH in wei
+				{ balance: "0x0" },
+				{ balance: "0x0" },
+			],
+			port: 2001
+		});
+
+		// Extract out ganacheProvider as it will be used again elsewhere
+		ganacheProvider = server.provider;
+
+		// Create a new Promise object to await for the callback function to get called.
+		await new Promise((resolve, reject) => {
+			server.listen(function (err, blockchain) {
+				if (err)
+					reject(err); // Reject error if unable to start ganache-core at all
+				else
+					resolve(blockchain); // @Debug: blockchain -> The full ganache-core object
+			});
+		});
+
+		// Create the web3 object with the newly created ganacheProvider
+		web3 = new Web3(ganacheProvider);
+	});
+
+
 	before("Create ETH accounts and read Build files", async function () {
 		accounts = await web3.eth.getAccounts();
 		acc_ETH = accounts[0];
@@ -74,7 +89,7 @@ describe("Gasless Transaction", function () {
 		/** @notice Inject configurations for testing relayer into the environmental variables */
 
 		// PORT for relayer to use
-		process.env.PORT = 3000;
+		process.env.PORT = 2002;
 
 		// Read privateKey directly from ganacheProvider for relayer to use
 		// @Todo Explore using a fixed mnemonic, so it is always the same? Or is it actually needed
