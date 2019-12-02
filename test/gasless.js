@@ -182,6 +182,38 @@ describe("Gasless Transaction", function () {
 	});
 
 
+	it("Makes a gasless transaction", async function () {
+		const newValue = "24"; // Value to be set for N
+
+		/** @notice Create the transaction Data needed to call setN() on dapp contract */
+		const encodedTxData = dapp.methods.setN(newValue).encodeABI();
+
+		/** @notice Create tx of action user wants to execute before sending to relayer */
+		const tx = {
+			// The public address of the user who signs on this first to show intent of execution
+			from: acc_ETHless.address,
+
+			// Target address to interact with, which is the address of the Identity contract (Smart contract wallet address of this user) in this test
+			to: identity.options.address,
+
+			// nonce of the signer, which is the transaction count of the user
+			nonce: web3.utils.toHex(await web3.eth.getTransactionCount(acc_ETHless.address)),
+
+			// Maximum amount of gas to use for the transaction
+			// With an additional 10% for margin or error
+			// Created with the same method of calling setN of dapp
+			gasLimit: web3.utils.toHex(Math.trunc(await dapp.methods.setN(newValue).estimateGas() * 1.1)),
+
+			// This should ALWAYS be 0! Because EOA cannot send any ETH
+			// Even if there is any ETH transfer from User, it is ETH transfer from the Smart Contract Wallet.
+			// The value SCW sends over should be a function parameter to the execute call
+			value: 0,
+
+			// Data sent to execute function, with txData to interact with Dapp
+			data: identity.methods.execute(dapp.options.address, 0, encodedTxData, 0).encodeABI()
+		};
+	});
+
 	after("After hook to close gasless-relayer server and ganache-core server", async function () {
 		// await new Promise object for "express app to close" callback function to get called.
 		await new Promise((resolve) => app.close(resolve));
