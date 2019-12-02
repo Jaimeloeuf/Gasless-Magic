@@ -1,5 +1,6 @@
 # Smart Contract Wallet
-Smart Contract Wallet is a Blockchain wallet/account that runs as a piece of code on the Blockchain (more specifically, the Ethereum Blockchain) to control your funds. This contrast with the traditionally available EOA (Externally Owned Accounts) which is just a Private/Public Key pair.
+Smart Contract Wallet is a Blockchain wallet/account that runs as a piece of code on the Blockchain (more specifically, the Ethereum Blockchain) to control your funds. This contrast with the traditionally available EOA (Externally Owned Accounts) which is just a Private/Public Key pair.  
+The whole point of a Smart Contract Wallet is to act exactly like a EOA but with more features like gas abstraction, with better extensibility.  
 
 
 ## Main features
@@ -38,6 +39,10 @@ Smart Contract Wallet is a Blockchain wallet/account that runs as a piece of cod
     - Tests for the smart contracts.
     - Named after the contracts that they are testing
     - All tests can be ran using the npm scripts like "npm run test" or "npm run full_test"
+
+
+## Running tests
+Currently, the test, "gasless.js" requires PORT 2001 & 2002 to be free for use. Test will fail if these 2 PORTs are already in used.  
 
 
 ## On truffle usage
