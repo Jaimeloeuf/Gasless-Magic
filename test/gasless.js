@@ -59,7 +59,7 @@ describe("Gasless Transaction", function () {
 		// Extract out ganacheProvider as it will be used again elsewhere
 		ganacheProvider = server.provider;
 
-		// Create a new Promise object to await for the callback function to get called.
+		// await new Promise object for "Start ganache-core server" callback function to get called.
 		await new Promise((resolve, reject) => {
 			server.listen(function (err, blockchain) {
 				if (err)
@@ -111,7 +111,6 @@ describe("Gasless Transaction", function () {
 
 		// Construct the Base/Root URL
 		relayer_host = `http://localhost:${PORT}`;
-		print(`Interacting with Gasless Relayer server at: '${relayer_host}'`);
 	});
 
 
@@ -173,13 +172,17 @@ describe("Gasless Transaction", function () {
 
 
 	after("After hook to close gasless-relayer server and ganache-core server", async function () {
-		// Await so that it only continues after the callback function is called. @Todo to verify if this is deterministic
-		await app.close(() => print("Server stopped and port closed"));
+		// await new Promise object for "express app to close" callback function to get called.
+		await new Promise((resolve) => app.close(resolve));
 
-		// Close the ganache-core server, throw the error if it fails
-		server.close(function (err) {
-			if (err)
-				throw (err);
+		// await new Promise object for "Close ganache-core server" callback function to get called.
+		await new Promise((resolve, reject) => {
+			server.close(function (err) {
+				if (err)
+					reject(err); // Reject error if unable to stop ganache-core
+				else
+					resolve();
+			});
 		});
 	});
 });
