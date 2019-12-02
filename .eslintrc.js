@@ -30,6 +30,9 @@ module.exports = {
             "error",
             "always"
         ],
+        "camelcase": [
+            "error"
+        ],
         /** Reference links for rule below
          * @link https://eslint.org/docs/rules/require-atomic-updates
          * @link https://stackoverflow.com/questions/56892964/await-async-race-condition-error-in-eslint-require-atomic-updates

@@ -35,7 +35,7 @@ describe("Gasless Transaction", function () {
 	let identity, dapp;
 
 	/** @notice Base/Root URL of the relayer */
-	let relayer_host;
+	let relayerHost;
 
 	/** @notice Variable to temporarily store the estimated Gas Limit of contract method executions */
 	let gasEstimate;
@@ -121,7 +121,7 @@ describe("Gasless Transaction", function () {
 		app = await require("gasless-relayer");
 
 		// Construct the Base/Root URL
-		relayer_host = `http://localhost:${PORT}`;
+		relayerHost = `http://localhost:${PORT}`;
 	});
 
 
@@ -140,16 +140,16 @@ describe("Gasless Transaction", function () {
 
 
 	it("Value of n can be updated", async function () {
-		const new_value = "12345"; // Value to be set for N
+		const newValue = "12345"; // Value to be set for N
 
 		const initialValueOfN = await dapp.methods.n().call();
 		assert(initialValueOfN === "0", "Value of N should start with 0");
 
 		/** @notice Make the call from the account with ETH */
-		await dapp.methods.setN(new_value).send({ from: acc_ETH.address });
+		await dapp.methods.setN(newValue).send({ from: acc_ETH.address });
 
 		const finalValueOfN = await dapp.methods.n().call();
-		assert(finalValueOfN === new_value, "Value of N should be changed");
+		assert(finalValueOfN === newValue, "Value of N should be changed");
 
 		const finalSender = await dapp.methods.sender().call();
 		assert(finalSender === acc_ETH.address, "Account with ETH is not stored as account that made the call to setN()");
@@ -157,11 +157,11 @@ describe("Gasless Transaction", function () {
 
 
 	it("Proxy calls changes state of dapp with execute()", async function () {
-		const new_value = "2345"; // Value to be set for N
+		const newValue = "2345"; // Value to be set for N
 		// @Todo For some reasons, bigger values tend to fail
 
 		/** @notice Create the transaction Data needed to call setN() on dapp contract */
-		const encodedTxData = dapp.methods.setN(new_value).encodeABI();
+		const encodedTxData = dapp.methods.setN(newValue).encodeABI();
 
 		/** @notice Use execute method of identity contract to proxy the execution of setN() */
 		await identity.methods.execute(dapp.options.address, 0, encodedTxData, 0).send({ from: acc_ETH.address, gas: 4170000 });
@@ -169,14 +169,14 @@ describe("Gasless Transaction", function () {
 		const finalN = await dapp.methods.n().call();
 		const finalSender = await dapp.methods.sender().call();
 
-		assert(finalN === new_value, "Proxied call failed to change state in 'dapp' contract");
+		assert(finalN === newValue, "Proxied call failed to change state in 'dapp' contract");
 		assert(identity.options.address === finalSender, "Dapp did not set address of identity as the 'sender' variable");
 	});
 
 
 	it("Gasless-Relayer is up and running. /Ping route is tested to work", async function () {
 		// Parse the response value as JSON before testing
-		const res = JSON.parse(await request.get(`${relayer_host}/ping`));
+		const res = JSON.parse(await request.get(`${relayerHost}/ping`));
 		assert(res.status === 200, "Status Code returned is not as expected");
 		assert(res.body != false, "Request body was empty"); // Print the HTML for the Google homepage.
 	});
