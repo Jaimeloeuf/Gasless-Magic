@@ -23,7 +23,7 @@ describe("Gasless Transaction", function () {
 	let app;
 
 	/** @notice Create the variables for the different accounts */
-	let accounts, acc_ETH, acc_ETHless;
+	let acc_ETH, acc_ETHless;
 
 	/** @notice Variables for the contract build files */
 	let Identity, Dapp;
@@ -74,11 +74,28 @@ describe("Gasless Transaction", function () {
 	});
 
 
-	before("Create ETH accounts and read Build files", async function () {
-		accounts = await web3.eth.getAccounts();
-		acc_ETH = accounts[0];
-		acc_ETHless = accounts[1];
+	before("Create ETH accounts", async function () {
+		const accounts = await web3.eth.getAccounts();
+		const address_ETH = accounts[0];
+		const address_ETHless = accounts[1];
 
+		// Temporary variable used to store privateKey extracted from ganacheProvider
+		let privateKey;
+
+		// Read privateKey directly from ganacheProvider for relayer to use
+		privateKey = "0x" + ganacheProvider.manager.state.accounts[address_ETH.toLowerCase()].secretKey.toString("hex");
+		acc_ETH = web3.eth.accounts.privateKeyToAccount(privateKey);
+
+		privateKey = "0x" + ganacheProvider.manager.state.accounts[address_ETHless.toLowerCase()].secretKey.toString("hex");
+		acc_ETHless = web3.eth.accounts.privateKeyToAccount(privateKey);
+
+		// Simple assertion tests to ensure account generated with the privateKeys are correct
+		assert(acc_ETH.address === address_ETH);
+		assert(acc_ETHless.address === address_ETHless);
+	});
+
+
+	before("Read and store Build files", async function () {
 		// Get contract build files
 		Identity = require("../build/contracts/Identity");
 		Dapp = require("../build/contracts/Dapp");
@@ -91,20 +108,14 @@ describe("Gasless Transaction", function () {
 		// PORT for relayer to use
 		process.env.PORT = 2002;
 
-		// Read privateKey directly from ganacheProvider for relayer to use
-		// @Todo Explore using a fixed mnemonic, so it is always the same? Or is it actually needed
-		let privateKey = "0x" + ganacheProvider.manager.state.accounts[acc_ETH.toLowerCase()].secretKey.toString("hex");
-		// Simple assertion test to make sure the privateKey is correct
-		assert(web3.eth.accounts.privateKeyToAccount(privateKey).address === acc_ETH);
-
 		// Set the privateKey for the account "acc_ETH"
-		process.env.PRIVATE_KEY = privateKey;
+		process.env.PRIVATE_KEY = acc_ETH.privateKey;
 
 		// The Web3 provider's URL of gasless-relayer should be the ganache-core server started in this test
 		process.env.WEB3_PROVIDER_URL = `http://localhost:${ganacheProvider.options.port}`;
 
 		// Get the values out so they can be used later on
-		const { PORT, PRIVATE_KEY } = process.env;
+		const { PORT } = process.env;
 
 		// Require the gasless-relayer server to start it. Wait for server to start before proceeding with await
 		app = await require("gasless-relayer");
@@ -121,10 +132,10 @@ describe("Gasless Transaction", function () {
 
 		/** @notice Deploy the contracts */
 		gasEstimate = await IdentityContract.deploy({ data: Identity.bytecode }).estimateGas();
-		identity = await IdentityContract.deploy({ data: Identity.bytecode }).send({ from: acc_ETH, gas: gasEstimate });
+		identity = await IdentityContract.deploy({ data: Identity.bytecode }).send({ from: acc_ETH.address, gas: gasEstimate });
 
 		gasEstimate = await DappContract.deploy({ data: Dapp.bytecode }).estimateGas();
-		dapp = await DappContract.deploy({ data: Dapp.bytecode }).send({ from: acc_ETH, gas: gasEstimate });
+		dapp = await DappContract.deploy({ data: Dapp.bytecode }).send({ from: acc_ETH.address, gas: gasEstimate });
 	});
 
 
@@ -135,13 +146,13 @@ describe("Gasless Transaction", function () {
 		assert(initialValueOfN === "0", "Value of N should start with 0");
 
 		/** @notice Make the call from the account with ETH */
-		await dapp.methods.setN(new_value).send({ from: acc_ETH });
+		await dapp.methods.setN(new_value).send({ from: acc_ETH.address });
 
 		const finalValueOfN = await dapp.methods.n().call();
 		assert(finalValueOfN === new_value, "Value of N should be changed");
 
 		const finalSender = await dapp.methods.sender().call();
-		assert(acc_ETH === finalSender, "Account with ETH is not stored as account that made the call to setN()");
+		assert(finalSender === acc_ETH.address, "Account with ETH is not stored as account that made the call to setN()");
 	});
 
 
@@ -153,7 +164,7 @@ describe("Gasless Transaction", function () {
 		const encodedTxData = dapp.methods.setN(new_value).encodeABI();
 
 		/** @notice Use execute method of identity contract to proxy the execution of setN() */
-		await identity.methods.execute(dapp.options.address, 0, encodedTxData, 0).send({ from: acc_ETH, gas: 4170000 });
+		await identity.methods.execute(dapp.options.address, 0, encodedTxData, 0).send({ from: acc_ETH.address, gas: 4170000 });
 
 		const finalN = await dapp.methods.n().call();
 		const finalSender = await dapp.methods.sender().call();
