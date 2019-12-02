@@ -30,10 +30,9 @@
     "dependencies": {
         "dotenv": "^8.2.0",
         "solc": "^0.5.12",
-        "web3": "^1.2.1"
+        "web3": "^1.2.4"
     },
     "devDependencies": {
-        "@truffle/contract": "^4.1.1",
         "@truffle/hdwallet-provider": "^1.0.26",
         "eslint": "^6.6.0",
         "eslint-plugin-truffle": "^0.3.1",
