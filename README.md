@@ -43,6 +43,7 @@ The whole point of a Smart Contract Wallet is to act exactly like a EOA but with
 
 ## Running tests
 Currently, the test, "gasless.js" requires PORT 2001 & 2002 to be free for use. Test will fail if these 2 PORTs are already in used.  
+To use this with the relayer, or to get the ABI of this wallet, use ```npm link``` in order to connect to this repo and use the build files directly.  
 
 
 ## On truffle usage
